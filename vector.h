@@ -8,7 +8,7 @@
 #include <math.h>
 #include "neuron.h"
 
-extern double vector_dot(neuron_st n, int a, int b);
+extern double vector_dot(neuron_st n, int size);
 extern double vector_sigmoid(double x);
 
 #endif /* __VECTOR_H__ */

@@ -1,7 +1,13 @@
 #include "vector.h"
 
-double vector_dot(neuron_st n, int a, int b) {
-    return n.inputs[a] * n.weights[a] + n.inputs[b] * n.weights[b];
+double vector_dot(neuron_st n, int size) {
+    double r = 0;
+
+    for(int i = 0; i < size; i++) {
+        r += n.inputs[i] * n.weights[i] + n.bias;
+    }
+
+    return r;
 }
 
 double vector_sigmoid(double x) {
