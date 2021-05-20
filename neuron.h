@@ -6,22 +6,28 @@
 #define __NEURON_H__
 
 #include <stddef.h>
-#include <stdint.h>
+#include "types.h"
+#include "link.h"
 
-typedef struct neuron_st neuron_st;
 
 struct neuron_st {
-    size_t size;
-    double output;
+    link_st *inputs;
+    link_st *outputs;
+    size_t num_inputs;
+    size_t num_outputs;
     double bias;
-    double *inputs;
-    double *weights;
+    double total_input;
+    double output;
+    double output_derivate;
+    double input_derivate;
+    double acc_input_derivate;
+    double (*func)(double);
 };
 
-extern void neuron_init(neuron_st *n, size_t s);
-extern double neuron_output(neuron_st *n, double (*f)(double));
-extern void neuron_set_inputs(neuron_st *n, ...);
-extern void neuron_set_weights(neuron_st *n, ...);
-
+extern void neuron_init(neuron_st *n, double (*func)(double));
+extern void neuron_add_inputs(neuron_st *n, ...);
+extern void neuron_add_outputs(neuron_st *n, ...);
+extern void neuron_update_output(neuron_st *n);
+extern void neuron_free(neuron_st *n);
 
 #endif /* __NEURON_H__ */

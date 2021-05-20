@@ -10,13 +10,23 @@
 #include "neuron.h"
 
 extern double vmath_dot(double *va, double *vb, size_t size);
+
+// derivate of activation functions
+extern double vmath_d_afunc(double x, double (*f)(double));
+
+// activation functions
 extern double vmath_sigmoid(double x);
 extern double vmath_relu(double x);
+extern double vmath_tanh(double x);
+extern double vmath_softplus(double x);
+extern double vmath_gaussian(double x);
+
+// random
 extern double vmath_randomf(double min, double max);
 extern int vmath_randomi(int min, int max);
 
 extern double vmath_cost(double p, double t); // (prediction - target) ^ 2
-extern double vmath_slope(double p, double t);
+extern double vmath_d_cost(double p, double t);
 extern double vmath_lr_cost(double *models, double *targets, size_t size);
 extern double vmath_avg_lr_cost(double *models, double *targets, size_t size);
 
