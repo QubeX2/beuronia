@@ -19,7 +19,7 @@ struct neuron_st {
 };
 
 extern void neuron_init(neuron_st *n, size_t s);
-extern double neuron_output(neuron_st *n);
+extern double neuron_output(neuron_st *n, double (*f)(double));
 extern void neuron_set_inputs(neuron_st *n, ...);
 extern void neuron_set_weights(neuron_st *n, ...);
 

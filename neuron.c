@@ -11,11 +11,11 @@
 void neuron_init(neuron_st *n, size_t s)
 {
     n->size = s;
-    n->bias = VMATH_RAND();
+    n->bias = VMATH_RANDF();
     MALLOC(n->inputs, s);
     MALLOC(n->weights, s);
     for(size_t i=0;i<s;i++) {
-        n->weights[i] = VMATH_RAND();
+        n->weights[i] = VMATH_RANDF();
     }
 }
 
@@ -27,9 +27,9 @@ void neuron_free(neuron_st *n)
     n->weights = NULL;
 }
 
-double neuron_output(neuron_st *n)
+double neuron_output(neuron_st *n, double (*f)(double))
 {
-    return vmath_sigmoid(vmath_dot(n));
+    return (*f)(vmath_dot(n->inputs, n->weights, n->size)) + n->bias;
 }
 
 void neuron_set_inputs(neuron_st *n, ...)

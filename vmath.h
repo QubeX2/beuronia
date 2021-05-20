@@ -5,14 +5,19 @@
 #ifndef __VMATH_H__
 #define __VMATH_H__
 
-#define VMATH_RAND() vmath_random(-1.0, 1.0)
+#define VMATH_RANDF() vmath_randomf(-1.0, 1.0)
 
 #include "neuron.h"
 
-extern double vmath_dot(neuron_st *n);
+extern double vmath_dot(double *va, double *vb, size_t size);
 extern double vmath_sigmoid(double x);
-extern double vmath_random(double min, double max);
+extern double vmath_relu(double x);
+extern double vmath_randomf(double min, double max);
+extern int vmath_randomi(int min, int max);
+
 extern double vmath_cost(double p, double t); // (prediction - target) ^ 2
 extern double vmath_slope(double p, double t);
+extern double vmath_lr_cost(double *models, double *targets, size_t size);
+extern double vmath_avg_lr_cost(double *models, double *targets, size_t size);
 
 #endif /* __VMATH_H__ */
