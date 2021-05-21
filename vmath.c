@@ -179,8 +179,7 @@ char *vmath_create_id()
     return id;
 }
 
-
-/**
- * 
- * b = b - 0.1 * vmath_slope();
- */
+uint32_t vmath_bytes2uint32(char bytes[4])
+{
+    return  (uint32_t)((uint8_t)bytes[0] << 24) | ((uint8_t)bytes[1] << 16) | ((uint8_t)bytes[2] << 8) | (uint8_t)bytes[3];
+}

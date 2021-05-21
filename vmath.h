@@ -7,6 +7,7 @@
 
 #define VMATH_RANDF() vmath_randomf(-1.0, 1.0)
 
+#include <stdint.h>
 #include "neuron.h"
 
 extern double vmath_dot(double *va, double *vb, size_t size);
@@ -30,6 +31,8 @@ extern double vmath_error(double p, double t); // (prediction - target) ^ 2
 extern double vmath_d_error(double p, double t);
 extern double vmath_lr_cost(double *models, double *targets, size_t size);
 extern double vmath_avg_lr_cost(double *models, double *targets, size_t size);
+
+extern uint32_t vmath_bytes2uint32(char bytes[4]);
 
 extern char *vmath_create_id();
 #endif /* __VMATH_H__ */

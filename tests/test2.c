@@ -1,3 +1,11 @@
+/**
+ * Copyright (C) 2021 Mikael Andersson
+ * qubex2@gmail.com
+ * 
+ * TESTS NEURAL NETWORK WITH LAYERS
+ * TEST DATA FLOWER PETALS LENGHT, WIDHT AND COLOR
+ * TRAIN NETWORK TO PREDICT COLOR
+ */
 #include <stdio.h>
 #include "network.h"
 #include "layer.h"
@@ -19,7 +27,7 @@ int main(void)
         { 5.5, 1, 1},
     };
     double learning_rate = 0.2;
-    size_t num_iterations = 100000;
+    size_t num_iterations = 500000;
 
     network_st netw;
     network_init(&netw, "network");
@@ -45,18 +53,14 @@ int main(void)
     link_init(&l2, "link 1.2", &ni2, &no);
 
     double targets[1];
-    double inputs[2];
     for(size_t iter = 1; iter <= num_iterations; iter++) {
         int w = vmath_randomi(0, 7);
         targets[0] = t_dataset[w][2];
-        inputs[0] = t_dataset[w][0];
-        inputs[1] = t_dataset[w][1];
+        double *inputs = t_dataset[w];
         network_forward(&netw, inputs, 2);
         network_backward(&netw, targets, 1);
         network_update_weights(&netw, learning_rate);
         network_print_training(&netw, targets, 1, iter);
-        //network_print(&netw);
-        //getchar();
     }
     return 0;
 }
