@@ -20,13 +20,14 @@ extern double vmath_relu(double x);
 extern double vmath_tanh(double x);
 extern double vmath_softplus(double x);
 extern double vmath_gaussian(double x);
+extern double vmath_linear(double x);
 
 // random
 extern double vmath_randomf(double min, double max);
 extern int vmath_randomi(int min, int max);
 
-extern double vmath_cost(double p, double t); // (prediction - target) ^ 2
-extern double vmath_d_cost(double p, double t);
+extern double vmath_error(double p, double t); // (prediction - target) ^ 2
+extern double vmath_d_error(double p, double t);
 extern double vmath_lr_cost(double *models, double *targets, size_t size);
 extern double vmath_avg_lr_cost(double *models, double *targets, size_t size);
 

@@ -21,6 +21,7 @@ struct neuron_st {
     double output_derivate;
     double input_derivate;
     double acc_input_derivate;
+    size_t num_acc_derivates;
     double (*func)(double);
 };
 

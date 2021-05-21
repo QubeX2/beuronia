@@ -19,9 +19,9 @@ struct node_st {
     double prediction;
     double target;
     double dot;
-    double cost;
+    double error;
     // derivatives
-    double d_cost;
+    double d_error;
     double d_prediction;
     double (*func)(double);
 };

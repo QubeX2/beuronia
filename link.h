@@ -16,8 +16,9 @@ struct link_st {
     neuron_st *dest;
     bool is_dead;
     double weight;
-    double cost_derivate;
-    double acc_cost_derivate;
+    double error_derivate;
+    double acc_error_derivate;
+    size_t num_acc_derivates;
 };
 
 extern void link_print(link_st *link);

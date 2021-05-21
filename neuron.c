@@ -16,7 +16,7 @@
 
 void neuron_print(neuron_st *nn)
 {
-    printf("\t\tNeuron: { .name=%s, .output=%f, .total_input=%f, .bias=%f, .num_inputs=%zu, .num_outputs=%zu }\n",
+    printf("\t\tNeuron: {\n\t\t\t.name=%s, .output=%f, .total_input=%f, .bias=%f, .num_inputs=%zu, .num_outputs=%zu\n",
         nn->name,
         nn->output,
         nn->total_input,
@@ -24,6 +24,12 @@ void neuron_print(neuron_st *nn)
         nn->num_inputs,
         nn->num_outputs
     );
+    printf("\t\t\t.out_der=%f, .acc_out_der=%f, .num_acc_out_ders=%zu",
+        nn->output_derivate,
+        nn->acc_input_derivate,
+        nn->num_acc_derivates
+    );
+    printf("\n\t\t}\n");
 }
 
 void neuron_init(neuron_st *nn, char *name, double (*func)(double))
@@ -37,6 +43,10 @@ void neuron_init(neuron_st *nn, char *name, double (*func)(double))
     nn->output = 0;
     nn->num_inputs = 0;
     nn->num_outputs = 0;
+    nn->input_derivate = 0;
+    nn->output_derivate = 0;
+    nn->acc_input_derivate = 0;
+    nn->num_acc_derivates = 0;
 }
 
 void neuron_update_output(neuron_st *nn)

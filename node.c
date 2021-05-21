@@ -32,14 +32,14 @@ double node_predict(node_st *n, double learning_rate)
 {
     n->dot = vmath_dot(n->inputs, n->weights, n->size) + n->bias;
     n->prediction = n->func(n->dot);
-    n->cost = vmath_cost(n->prediction, n->target);
-    n->d_cost = vmath_d_cost(n->prediction, n->target);
+    n->error = vmath_error(n->prediction, n->target);
+    n->d_error = vmath_d_error(n->prediction, n->target);
     n->d_prediction = vmath_d_afunc(n->dot, n->func);
 
     // partial derivatives
-    double cost_w1 = n->d_cost * n->d_prediction * n->inputs[0];
-    double cost_w2 = n->d_cost * n->d_prediction * n->inputs[1];
-    double cost_b = n->d_cost * n->d_prediction * 1;
+    double cost_w1 = n->d_error * n->d_prediction * n->inputs[0];
+    double cost_w2 = n->d_error * n->d_prediction * n->inputs[1];
+    double cost_b = n->d_error * n->d_prediction * 1;
 
     // change weights
     n->weights[0] -= learning_rate * cost_w1;

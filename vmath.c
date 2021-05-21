@@ -54,6 +54,11 @@ double vmath_gaussian(double x)
 {
     return exp(-x*x);
 }
+
+double vmath_linear(double x)
+{
+    return x;
+}
 /* end activation functions */
 
 double vmath_randomf(double min, double max)
@@ -80,7 +85,7 @@ int vmath_randomi(int min, int max)
  * squared error
  * prediction and target
  */
-double vmath_cost(double p, double t)
+double vmath_error(double p, double t)
 {
     return (p - t) * (p - t);
 }
@@ -90,7 +95,7 @@ double vmath_cost(double p, double t)
  * power rule - if f(x) = x^y, then derivative of f(x) = yx^y-1 
  * example: f(x) = x^3 , dx of f(x) = 3x^2
  */ 
-double vmath_d_cost(double p, double t)
+double vmath_d_error(double p, double t)
 {
     //double h = 0.01;
     //return (vmath_cost(p + h, t) - vmath_cost(p, t))/h;
@@ -139,6 +144,8 @@ double vmath_d_afunc(double x, double (*f)(double))
     } else if(f == vmath_gaussian) {
         // -2xe^-x^2
         return -2 * x * exp(-x * x);
+    } else if(f == vmath_linear) {
+        return 1;
     }
 
     return 0;
