@@ -7,15 +7,16 @@
 
 #include <stddef.h>
 #include "neuron.h"
+#include "layer.h"
 
-typedef struct network_st {
-    neuron_st **neurons;
-    size_t num_neurons;
+struct network_st {
+    char *name;
+    layer_st **layers;
     size_t num_layers;
-} network_st;
+};
 
-extern void network_init(network_st *nw);
-extern void network_push_neuron(network_st *nw, neuron_st *n);
+extern void network_init(network_st *nw, char *name);
+extern void network_push_layer(network_st *nw, layer_st *layer);
 extern void network_print(network_st *nw);
 extern void network_free(network_st *nw);
 

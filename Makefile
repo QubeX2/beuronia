@@ -3,7 +3,7 @@ CFLAGS= -Wall -Wextra -Werror -Wfloat-equal -ggdb -std=c99
 # -save-temps : debugging macros -O2
 LFLAGS=
 LIBS=-lm
-SRCS=beuronia.c node.c vmath.c system.c memory.c neuron.c link.c network.c
+SRCS=beuronia.c node.c vmath.c system.c memory.c neuron.c link.c network.c layer.c
 OBJS=$(SRCS:%.c=$(OUTDIR)/%.o)
 OUTDIR=bin
 MAIN=beuronia

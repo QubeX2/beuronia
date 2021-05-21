@@ -8,6 +8,7 @@
 #include <time.h>
 #include "vmath.h"
 #include "neuron.h"
+#include "memory.h"
 
 double vmath_dot(double *va, double *vb, size_t size) 
 {
@@ -142,6 +143,35 @@ double vmath_d_afunc(double x, double (*f)(double))
 
     return 0;
 }
+
+char *vmath_create_id()
+{
+    char *id;
+    MALLOC(id, 12);
+    static uint32_t c = 0;
+    c += 1;
+    c &= 0xffffffff;
+
+    time_t t = time(NULL);
+    id[0] = (t >> 24) & 0xff;
+    id[1] = (t >> 16) & 0xff;
+    id[2] = (t >> 8) & 0xff;
+    id[3] = t & 0xff;
+
+    int r = vmath_randomi(0, 0x7fffffff);
+
+    id[4] = (r >> 24) & 0xff;
+    id[5] = (r >> 16) & 0xff;
+    id[6] = (r >> 8) & 0xff;
+    id[7] = r & 0xff;
+
+    id[11] = (c >> 24) & 0xff;
+    id[10] = (c >> 16) & 0xff;
+    id[9] = (c >> 8) & 0xff;
+    id[8] = c & 0xff;
+    return id;
+}
+
 
 /**
  * 

@@ -30,4 +30,5 @@ extern double vmath_d_cost(double p, double t);
 extern double vmath_lr_cost(double *models, double *targets, size_t size);
 extern double vmath_avg_lr_cost(double *models, double *targets, size_t size);
 
+extern char *vmath_create_id();
 #endif /* __VMATH_H__ */

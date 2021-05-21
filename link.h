@@ -11,6 +11,7 @@
 #include "neuron.h"
 
 struct link_st {
+    char *name;
     neuron_st *source;
     neuron_st *dest;
     bool is_dead;
@@ -19,7 +20,8 @@ struct link_st {
     double acc_cost_derivate;
 };
 
-extern void link_init(link_st *link, neuron_st *source, neuron_st *dest);
+extern void link_print(link_st *link);
+extern void link_init(link_st *link, char *name, neuron_st *source, neuron_st *dest);
 extern void link_free(link_st *link);
 
 #endif /* __LINK_H__ */
