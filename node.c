@@ -55,20 +55,20 @@ double node_output(node_st *n, double (*f)(double))
 
 void node_set_inputs(node_st *n, ...)
 {
-    va_list args;
-    va_start(args, n);
+    va_list ap;
+    va_start(ap, n);
     for(size_t i = 0; i < n->size; i++) {
-        n->inputs[i] = va_arg(args, double);
+        n->inputs[i] = va_arg(ap, double);
     }
-    va_end(args);
+    va_end(ap);
 }
 
 void node_set_weights(node_st *n, ...)
 {
-    va_list args;
-    va_start(args, n);
+    va_list ap;
+    va_start(ap, n);
     for(size_t i=0;i<n->size;i++) {
-        n->weights[i] = va_arg(args, double);
+        n->weights[i] = va_arg(ap, double);
     }
-    va_end(args);
+    va_end(ap);
 }

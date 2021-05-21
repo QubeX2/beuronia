@@ -3,9 +3,9 @@
  * qubex2@gmail.com
  */
 #include <stdbool.h>
-#include "../beuronia.h"
-#include "../vmath.h"
-#include "../node.h"
+#include "beuronia.h"
+#include "vmath.h"
+#include "node.h"
 
 int main(void)
 {
