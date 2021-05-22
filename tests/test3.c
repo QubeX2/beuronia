@@ -51,8 +51,8 @@ typedef struct label_dat_st {
 } label_dat_st;
 
 #define INPUTS 728
-#define HIDDEN1 16
-#define HIDDEN2 16
+#define HIDDEN1 64
+#define HIDDEN2 32
 #define OUTPUTS 10
 
 uint8_t** images;
@@ -200,7 +200,7 @@ int main(void)
     //network_print(&netw);
 
     size_t iterations = 100000000;
-    double learning_rate = 2;
+    double learning_rate = 6;
     double targets[OUTPUTS][OUTPUTS] = {
         { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
