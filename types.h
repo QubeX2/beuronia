@@ -16,6 +16,4 @@ typedef struct network_st network_st;
 typedef struct neuron_st neuron_st;
 typedef struct link_st link_st;
 
-
-
 #endif /* __TYPES_H__ */

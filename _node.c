@@ -3,25 +3,25 @@
  * Copyright (C) 2021 Mikael Andersson
  * qubex2@gmail.com
  */
-#include <stddef.h>
-#include <stdarg.h>
 #include "_node.h"
 #include "memory.h"
 #include "vmath.h"
+#include <stdarg.h>
+#include <stddef.h>
 
-void node_init(node_st *n, size_t s, double (*f)(double))
+void node_init(node_st* n, size_t s, double (*f)(double))
 {
     n->size = s;
     n->bias = VMATH_RANDF();
     MALLOC(n->inputs, s);
     MALLOC(n->weights, s);
-    for(size_t i=0;i<s;i++) {
+    for (size_t i = 0; i < s; i++) {
         n->weights[i] = VMATH_RANDF();
     }
     n->func = f;
 }
 
-void node_free(node_st *n)
+void node_free(node_st* n)
 {
     FREE(n->inputs);
     FREE(n->weights);
@@ -29,7 +29,7 @@ void node_free(node_st *n)
     n->weights = NULL;
 }
 
-double node_predict(node_st *n, double learning_rate)
+double node_predict(node_st* n, double learning_rate)
 {
     n->dot = vmath_dot(n->inputs, n->weights, n->size) + n->bias;
     n->prediction = n->func(n->dot);
@@ -49,26 +49,26 @@ double node_predict(node_st *n, double learning_rate)
     return n->prediction;
 }
 
-double node_output(node_st *n, double (*f)(double))
+double node_output(node_st* n, double (*f)(double))
 {
     return (*f)(vmath_dot(n->inputs, n->weights, n->size)) + n->bias;
 }
 
-void node_set_inputs(node_st *n, ...)
+void node_set_inputs(node_st* n, ...)
 {
     va_list ap;
     va_start(ap, n);
-    for(size_t i = 0; i < n->size; i++) {
+    for (size_t i = 0; i < n->size; i++) {
         n->inputs[i] = va_arg(ap, double);
     }
     va_end(ap);
 }
 
-void node_set_weights(node_st *n, ...)
+void node_set_weights(node_st* n, ...)
 {
     va_list ap;
     va_start(ap, n);
-    for(size_t i=0;i<n->size;i++) {
+    for (size_t i = 0; i < n->size; i++) {
         n->weights[i] = va_arg(ap, double);
     }
     va_end(ap);

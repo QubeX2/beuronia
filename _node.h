@@ -15,8 +15,8 @@ struct node_st {
     size_t size;
     double output;
     double bias;
-    double *inputs;
-    double *weights;
+    double* inputs;
+    double* weights;
     double prediction;
     double target;
     double dot;
@@ -27,11 +27,10 @@ struct node_st {
     double (*func)(double);
 };
 
-extern void node_init(node_st *n, size_t s, double (*f)(double));
-extern double node_predict(node_st *n, double learning_rate);
-extern double node_output(node_st *n, double (*f)(double));
-extern void node_set_inputs(node_st *n, ...);
-extern void node_set_weights(node_st *n, ...);
-
+extern void node_init(node_st* n, size_t s, double (*f)(double));
+extern double node_predict(node_st* n, double learning_rate);
+extern double node_output(node_st* n, double (*f)(double));
+extern void node_set_inputs(node_st* n, ...);
+extern void node_set_weights(node_st* n, ...);
 
 #endif /* __NODE_H__ */

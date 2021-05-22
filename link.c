@@ -3,24 +3,23 @@
  * qubex2@gmail.com
  */
 
+#include "link.h"
+#include "memory.h"
+#include "vmath.h"
 #include <stdio.h>
 #include <string.h>
-#include "link.h"
-#include "vmath.h"
-#include "memory.h"
 
-void link_print(link_st *link)
+void link_print(link_st* link)
 {
-    printf("\t\t\tLink: { .name=%s, .weight=%f, .err_der=%f, .acc_err_der=%f, .num_acc_err_ders=%zu }\n", 
-        link->name, 
+    printf("\t\t\tLink: { .name=%s, .weight=%f, .err_der=%f, .acc_err_der=%f, .num_acc_err_ders=%zu }\n",
+        link->name,
         link->weight,
         link->error_derivate,
         link->acc_error_derivate,
-        link->num_acc_derivates
-    );
+        link->num_acc_derivates);
 }
 
-void link_init(link_st *link, char *name, neuron_st *source, neuron_st *dest)
+void link_init(link_st* link, char* name, neuron_st* source, neuron_st* dest)
 {
     link->name = strdup(name);
     link->source = source;
@@ -34,7 +33,7 @@ void link_init(link_st *link, char *name, neuron_st *source, neuron_st *dest)
     neuron_push_link(dest, LINK_TYPE_INPUT, link);
 }
 
-extern void link_free(link_st *link)
+extern void link_free(link_st* link)
 {
     FREE(link->name);
     FREE(link->source);
