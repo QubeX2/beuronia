@@ -21,17 +21,25 @@ bool network_print_training(network_st* nw, double* targets, size_t size, size_t
     }
 
     bool guess = false;
+    size_t count = 0;
     for (size_t t = 0; t < olayer->num_neurons; t++) {
         neuron_st* nn = olayer->neurons[t];
         guess = (int)(nn->output > 0.5 ? 1 : 0) == (int)(targets[t]);
-        if(guess == false) {
-            break;
+        if(guess) {
+            count++;
         }
     }
-    if(guess == true || (iter % 100000) == 0) {
-        printf("ITER: %zu, GUESS: %s\n", iter, guess == true ? "RIGHT" : "WRONG");
-        return guess;
-    }
+
+    if(count == size) {
+        for (size_t t = 0; t < olayer->num_neurons; t++) {
+            neuron_st* nn = olayer->neurons[t];
+            bool g = (int)(nn->output > 0.5 ? 1 : 0) == (int)(targets[t]);
+            printf("%zu: %0.2f %s %0.2f\n", t, nn->output, g ? "==" : "<>", targets[t]);
+        }
+
+        printf("ITER: %zu, GUESS: %s\n", iter, count == size ? "RIGHT" : "WRONG");
+        return count == size;
+    } 
     return false;
 }
 
@@ -154,7 +162,7 @@ void network_backward(network_st* nw, double* targets, size_t size)
     }
 }
 
-void network_update_weights(network_st* nw, double learningRate)
+void network_update_weights(network_st* nw, double learning_rate)
 {
     for (size_t a = 1; a < nw->num_layers; a++) {
         layer_st* layer = nw->layers[a];
@@ -163,7 +171,7 @@ void network_update_weights(network_st* nw, double learningRate)
 
             // update node's bias
             if (nn->num_acc_derivates > 0) {
-                nn->bias -= learningRate * (nn->acc_input_derivate / nn->num_acc_derivates);
+                nn->bias -= learning_rate * (nn->acc_input_derivate / nn->num_acc_derivates);
                 nn->acc_input_derivate = 0;
                 nn->num_acc_derivates = 0;
             }
@@ -172,7 +180,7 @@ void network_update_weights(network_st* nw, double learningRate)
             for (size_t i = 0; i < nn->num_inputs; i++) {
                 link_st* link = nn->inputs[i];
                 if (link->num_acc_derivates > 0) {
-                    link->weight -= learningRate * (link->acc_error_derivate / link->num_acc_derivates);
+                    link->weight -= learning_rate * (link->acc_error_derivate / link->num_acc_derivates);
                     link->acc_error_derivate = 0;
                     link->num_acc_derivates = 0;
                 }

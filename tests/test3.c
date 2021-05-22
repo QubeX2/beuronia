@@ -51,7 +51,8 @@ typedef struct label_dat_st {
 } label_dat_st;
 
 #define INPUTS 728
-#define HIDDEN 16
+#define HIDDEN1 16
+#define HIDDEN2 16
 #define OUTPUTS 10
 
 uint8_t** images;
@@ -128,13 +129,15 @@ int main(void)
     network_st netw;
     network_init(&netw, "network");
 
-    layer_st lin, lout, lhid;
+    layer_st lin, lout, lhid1, lhid2;
     layer_init(&lin, "input layer");
-    layer_init(&lhid, "hidden layer");
+    layer_init(&lhid1, "hidden layer 1");
+    layer_init(&lhid2, "hidden layer 2");
     layer_init(&lout, "output layer");
 
     network_push_layer(&netw, &lin);
-    network_push_layer(&netw, &lhid);
+    network_push_layer(&netw, &lhid1);
+    network_push_layer(&netw, &lhid2);
     network_push_layer(&netw, &lout);
 
     /**
@@ -144,7 +147,8 @@ int main(void)
      *  output layer 0-9 - 1s or 0s 
      **/
     neuron_st ni[INPUTS];
-    neuron_st nh[HIDDEN];
+    neuron_st nh1[HIDDEN1];
+    neuron_st nh2[HIDDEN2];
     neuron_st no[OUTPUTS];
 
     char name[24];
@@ -156,11 +160,18 @@ int main(void)
         layer_push_neuron(&lin, &ni[i]);
     }
 
-    for(size_t i = 0; i < ARRAY_LEN(nh); i++) {
+    for(size_t i = 0; i < ARRAY_LEN(nh1); i++) {
         memset(&name, 0, strlen(name));
-        sprintf(name, "nn hid %zu", i);
-        neuron_init(&nh[i], name, vmath_sigmoid);
-        layer_push_neuron(&lhid, &nh[i]);
+        sprintf(name, "nn hid1 %zu", i);
+        neuron_init(&nh1[i], name, vmath_sigmoid);
+        layer_push_neuron(&lhid1, &nh1[i]);
+    }
+
+    for(size_t i = 0; i < ARRAY_LEN(nh2); i++) {
+        memset(&name, 0, strlen(name));
+        sprintf(name, "nn hid2 %zu", i);
+        neuron_init(&nh2[i], name, vmath_sigmoid);
+        layer_push_neuron(&lhid2, &nh2[i]);
     }
 
     for(size_t i = 0; i < ARRAY_LEN(no); i++) {
@@ -175,9 +186,11 @@ int main(void)
      **/
 
     link_st lk1[INPUTS];
-    layer_link_neurons(&lin, &lhid, lk1);
-    link_st lk2[HIDDEN];
-    layer_link_neurons(&lhid, &lout, lk2);
+    layer_link_neurons(&lin, &lhid1, lk1);
+    link_st lk2[HIDDEN1];
+    layer_link_neurons(&lhid1, &lhid2, lk2);
+    link_st lk3[HIDDEN2];
+    layer_link_neurons(&lhid2, &lout, lk3);
 
 
     /**
@@ -187,7 +200,7 @@ int main(void)
     //network_print(&netw);
 
     size_t iterations = 100000000;
-    double learning_rate = 0.2;
+    double learning_rate = 2;
     double targets[OUTPUTS][OUTPUTS] = {
         { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
