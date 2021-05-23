@@ -15,7 +15,12 @@ struct network_st {
     size_t num_layers;
 };
 
+
+extern void network_save(network_st *nw, char* filename);
+extern void network_load(network_st *nw, char* filename);
 extern void network_init(network_st* nw, char* name);
+extern void network_setup(network_st *nw, size_t layer_count, size_t *neuron_count_list, double (*func)(double));
+extern void network_destroy(network_st *nw);
 extern void network_push_layer(network_st* nw, layer_st* layer);
 extern void network_print(network_st* nw);
 extern void network_free(network_st* nw);

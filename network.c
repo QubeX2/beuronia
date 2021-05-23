@@ -12,6 +12,98 @@
 #include <stdio.h>
 #include <string.h>
 
+void network_save(network_st *nw, char* filename)
+{
+    FILE *fp = fopen(filename, "wb");
+    if(fp == NULL) {
+        system_die("couldn't open save file");
+    }
+    uint8_t magic[] = { 0x01, 0x83, 0x13, 0x37 };
+    fwrite(magic, sizeof(magic), 1, fp);
+    size_t lname = strlen(nw->name);
+    // strlen(nw->name);
+    fwrite(&lname, sizeof(lname), 1, fp);
+    // nw->name
+    fwrite(nw->name, lname, 1, fp);
+    // num_layers
+    fwrite(&nw->num_layers, sizeof(size_t), 1, fp);
+    for(size_t a = 0; a < nw->num_layers; a++) {
+        layer_st *layer = nw->layers[a];
+        // num_neurons
+        fwrite(&layer->num_neurons, sizeof(size_t), 1, fp);
+        for(size_t n = 0; n < layer->num_neurons; n++) {
+            neuron_st *nn = layer->neurons[n];
+            // num_outputs
+            fwrite(&nn->num_outputs, sizeof(size_t), 1, fp);
+            for(size_t i = 0; i < nn->num_outputs; i++) {
+                link_st *link = nn->outputs[i];
+                // link weights
+                fwrite(&link->weight, sizeof(double), 1, fp);   
+            }
+        }
+    }
+    fclose(fp);
+}
+
+void network_destroy(network_st* nw)
+{
+    for (size_t a = 0; a < nw->num_layers; a++) {
+        layer_st* layer = nw->layers[a];
+        for (size_t n = 0; n < layer->num_neurons; n++) {
+            neuron_st* nn = layer->neurons[n];
+            for (size_t t = 0; t < nn->num_outputs; t++) {
+                link_st* link = nn->outputs[t];
+                link_free(link);
+                FREE(link);
+            }
+            neuron_free(nn);
+            FREE(nn);
+        }
+        layer_free(layer);
+        FREE(layer);
+    }
+    nw->num_layers = 0;
+}
+
+void network_setup(network_st* nw, size_t layer_count, size_t* neuron_count_list, double (*func)(double))
+{
+    char name[80];
+    // setup layers and neurons
+    for (size_t a = 0; a < layer_count; a++) {
+        size_t n_count = *(neuron_count_list++);
+        layer_st* layer;
+        MALLOC(layer, sizeof(layer_st));
+        memset(&name, 0, strlen(name));
+        sprintf(name, "layer %zu", a);
+        layer_init(layer, name);
+        network_push_layer(nw, layer);
+        for (size_t n = 0; n < n_count; n++) {
+            neuron_st* nn;
+            memset(&name, 0, strlen(name));
+            sprintf(name, "neuron %zu:%zu", a, n);
+            MALLOC(nn, sizeof(neuron_st));
+            neuron_init(nn, name, func);
+            layer_push_neuron(layer, nn);
+        }
+    }
+    // link all layers
+    for (size_t a = nw->num_layers - 1; a > 0; a--) {
+        layer_st* layert = nw->layers[a];
+        layer_st* layerp = nw->layers[a - 1];
+        for (size_t n = 0; n < layerp->num_neurons; n++) {
+            neuron_st* n1 = layerp->neurons[n];
+            for (size_t t = 0; t < layert->num_neurons; t++) {
+                link_st* link;
+                memset(&name, 0, strlen(name));
+                MALLOC(link, sizeof(link_st));
+                sprintf(name, "link %zu:%zu:%zu", a, n, t);
+                neuron_st* n2 = layert->neurons[t];
+                link_init(link, name, n1, n2);
+            }
+        }
+    }
+}
+
 bool network_print_training(network_st* nw, double* targets, size_t size, size_t iter)
 {
     layer_st* olayer = nw->layers[nw->num_layers - 1];
@@ -25,12 +117,12 @@ bool network_print_training(network_st* nw, double* targets, size_t size, size_t
     for (size_t t = 0; t < olayer->num_neurons; t++) {
         neuron_st* nn = olayer->neurons[t];
         guess = (int)(nn->output > 0.5 ? 1 : 0) == (int)(targets[t]);
-        if(guess) {
+        if (guess) {
             count++;
         }
     }
 
-    if(count == size) {
+    if (count == size) {
         for (size_t t = 0; t < olayer->num_neurons; t++) {
             neuron_st* nn = olayer->neurons[t];
             bool g = (int)(nn->output > 0.5 ? 1 : 0) == (int)(targets[t]);
@@ -39,7 +131,7 @@ bool network_print_training(network_st* nw, double* targets, size_t size, size_t
 
         printf("ITER: %zu, GUESS: %s\n", iter, count == size ? "RIGHT" : "WRONG");
         return count == size;
-    } 
+    }
     return false;
 }
 

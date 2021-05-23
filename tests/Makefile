@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS= -Wall -Wextra -Werror -Wfloat-equal -O2 -std=c99 -I../
+CFLAGS= -Wall -Wextra -Werror -Wfloat-equal -Wno-unused-parameter -Wno-unused-variable -O2 -std=c99 -I../
 # -save-temps : debugging macros -O2 -Wno-unused-variable -ggdb
 LFLAGS=
 LIBS=-lm

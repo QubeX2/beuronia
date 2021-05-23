@@ -36,6 +36,4 @@ void link_init(link_st* link, char* name, neuron_st* source, neuron_st* dest)
 extern void link_free(link_st* link)
 {
     FREE(link->name);
-    FREE(link->source);
-    FREE(link->dest);
 }
