@@ -12,6 +12,27 @@
 #include <stdio.h>
 #include <string.h>
 
+/**
+ * FILE FORMAT
+ * 4 bytes magic 0x01831337
+ * 1 ulong strlen nw->name
+ * * bytes nw->name
+ * 1 ulong nw->num_layers
+ * [
+ *      1 ulong layer->num_neurons
+ *      1 ulong neuron->outputs
+ *      * double weights
+ * ]
+ */
+void network_load(network_st *nw, char* filename)
+{
+    FILE *fp = fopen(filename, "rb");
+    if(fp == NULL) {
+        system_die("couldn't open load file");
+    }
+    fclose(fp);
+}
+
 void network_save(network_st *nw, char* filename)
 {
     FILE *fp = fopen(filename, "wb");
