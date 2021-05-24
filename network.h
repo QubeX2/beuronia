@@ -24,6 +24,7 @@ extern void network_destroy(network_st *nw);
 extern void network_push_layer(network_st* nw, layer_st* layer);
 extern void network_print(network_st* nw);
 extern void network_free(network_st* nw);
+extern void network_get_outputs(network_st* nw, double *outputs);
 
 extern void network_forward(network_st* nw, double* inputs, size_t size);
 extern void network_backward(network_st* nw, double* targets, size_t size);

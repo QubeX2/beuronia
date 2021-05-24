@@ -50,10 +50,6 @@ typedef struct label_dat_st {
     char num_labels[4];
 } label_dat_st;
 
-#define INPUTS 728
-#define HIDDEN1 64
-#define HIDDEN2 32
-#define OUTPUTS 10
 
 uint8_t** images;
 uint8_t* labels;
@@ -121,6 +117,9 @@ void draw_image(uint8_t* bytes, size_t size, size_t width)
     printf("\n");
 }
 
+#define INPUTS 728
+#define OUTPUTS 10
+
 int main(void)
 {
     load_images();
@@ -128,7 +127,7 @@ int main(void)
 
     network_st netw;
     network_init(&netw, "network");
-    size_t neuron_counts[] = { 728, 32, 16, 10 };
+    size_t neuron_counts[] = { INPUTS, 32, 16, OUTPUTS };
     network_setup(&netw, 4, neuron_counts, vmath_sigmoid);
 
     /**
@@ -137,7 +136,7 @@ int main(void)
 
     //network_print(&netw);
 
-    size_t iterations = 10;
+    size_t iterations = 10000;
     double learning_rate = 0.05;
     double targets[OUTPUTS][OUTPUTS] = {
         { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -165,15 +164,15 @@ int main(void)
 
         // set targets
         uint8_t num = labels[index];
-        network_backward(&netw, targets[num], 10);
+        network_backward(&netw, targets[num], OUTPUTS);
         network_update_weights(&netw, learning_rate);
-        if((network_print_training(&netw, targets[num], 10, iter)) == true) {
+        if((network_print_training(&netw, targets[num], OUTPUTS, iter)) == true) {
             draw_image(images[index], 728, 28);    
             draw_label(index);
         }
     }
     // save
-    network_save(&netw, "../saves/my.netw");
+    //network_save(&netw, "../saves/my.netw");
     // cleanup
     network_destroy(&netw);
 }

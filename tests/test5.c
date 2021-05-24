@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 /** LABELS
  * [offset] [type]          [value]          [description]
@@ -116,6 +117,10 @@ void draw_image(uint8_t* bytes, size_t size, size_t width)
     printf("\n");
 }
 
+#define INPUTS 728
+#define OUTPUTS 10
+#define FILENAME "../saves/my2.netw"
+
 int main(void)
 {
     load_images();
@@ -123,11 +128,14 @@ int main(void)
 
     network_st netw;
     network_init(&netw, "network");
-    size_t neuron_counts[] = { 4, 2, 1 };
-    network_setup(&netw, 3, neuron_counts, vmath_sigmoid);
-    network_print(&netw);
-    network_save(&netw, "../saves/my2.netw");
-    system_die("saved");
+
+    if(access(FILENAME, F_OK) == 0) {
+        network_load(&netw, FILENAME);
+    } else {
+        size_t neuron_counts[] = { INPUTS, 128, 64, OUTPUTS };
+        network_setup(&netw, 4, neuron_counts, vmath_sigmoid);
+    }
+
 
     /**
      * train iterations
@@ -135,9 +143,9 @@ int main(void)
 
     //network_print(&netw);
 
-    size_t iterations = 10;
+    size_t iterations = 100000;
     double learning_rate = 0.05;
-    double targets[10][10] = {
+    double targets[OUTPUTS][OUTPUTS] = {
         { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
         { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
@@ -150,28 +158,38 @@ int main(void)
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}
     };
 
-    double inputs[728];
-    for(size_t iter = 0; iter < iterations; iter++) {
+    double inputs[INPUTS];
+    double predictions[OUTPUTS];
+    double errors = 0;
+    size_t iter;
+    for(iter = 0; iter < iterations; iter++) {
         int index = vmath_randomi(0, 59999);
         
         // set inputs
-        uint8_t *bytes = images[728];
-        for(size_t b = 0; b < 728; b++) {
+        uint8_t *bytes = images[index];
+        for(size_t b = 0; b < INPUTS; b++) {
             inputs[b] = (double)bytes[b] / 255;
         }
-        network_forward(&netw, inputs, 728);
+        network_forward(&netw, inputs, INPUTS);
 
         // set targets
         uint8_t num = labels[index];
-        network_backward(&netw, targets[num], 10);
+        network_backward(&netw, targets[num], OUTPUTS);
         network_update_weights(&netw, learning_rate);
-        if((network_print_training(&netw, targets[num], 10, iter)) == true) {
-            draw_image(images[index], 728, 28);    
-            draw_label(index);
+
+        network_get_outputs(&netw, predictions);
+        for(int i = 0; i < OUTPUTS; i ++) {
+            if((int)(predictions[i] > 0.5 ? 1 : 0) != (int)targets[num][i]) {
+                errors += 1;
+                break;
+            }
         }
+        if(iter % 1000 == 0 && iter > 0)
+            printf("%0.2f%% errors of %zu iters\n", (errors / (double)iter) * 100, iter);
     }
+
     // save
-    network_save(&netw, "../saves/my.netw");
+    network_save(&netw, FILENAME);
     // cleanup
     network_destroy(&netw);
 }

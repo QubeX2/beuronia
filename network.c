@@ -30,6 +30,35 @@ void network_load(network_st *nw, char* filename)
     if(fp == NULL) {
         system_die("couldn't open load file");
     }
+    uint8_t magic[4];
+    fread(&magic, sizeof(magic), 1, fp);
+    size_t lname;
+    fread(&lname, sizeof(size_t),1, fp);
+    char name[lname + 1];
+    fread(&name, lname, 1, fp);
+    network_init(nw, name);
+    size_t n_layers;
+
+    fread(&n_layers, sizeof(size_t), 1, fp);
+    size_t neurons_count[n_layers];
+
+    for(size_t i = 0; i < n_layers; i++) {
+        fread(&neurons_count[i], sizeof(size_t), 1, fp);
+    }
+
+    network_setup(nw, n_layers, neurons_count, vmath_sigmoid);
+
+    for(size_t a = 0; a < nw->num_layers; a++) {
+        layer_st *layer = nw->layers[a];
+        for(size_t n = 0; n < layer->num_neurons; n++) {
+            neuron_st *nn = layer->neurons[n];
+            for(size_t i = 0; i < nn->num_outputs; i++) {
+                link_st *link = nn->outputs[i];
+                fread(&link->weight, sizeof(double), 1, fp);
+            }
+        }
+    } 
+
     fclose(fp);
 }
 
@@ -43,19 +72,22 @@ void network_save(network_st *nw, char* filename)
     fwrite(magic, sizeof(magic), 1, fp);
     size_t lname = strlen(nw->name);
     // strlen(nw->name);
-    fwrite(&lname, sizeof(lname), 1, fp);
+    fwrite(&lname, sizeof(size_t), 1, fp);
     // nw->name
     fwrite(nw->name, lname, 1, fp);
     // num_layers
     fwrite(&nw->num_layers, sizeof(size_t), 1, fp);
+
     for(size_t a = 0; a < nw->num_layers; a++) {
         layer_st *layer = nw->layers[a];
         // num_neurons
         fwrite(&layer->num_neurons, sizeof(size_t), 1, fp);
+    }
+
+    for(size_t a = 0; a < nw->num_layers; a++) {
+        layer_st *layer = nw->layers[a];
         for(size_t n = 0; n < layer->num_neurons; n++) {
             neuron_st *nn = layer->neurons[n];
-            // num_outputs
-            fwrite(&nn->num_outputs, sizeof(size_t), 1, fp);
             for(size_t i = 0; i < nn->num_outputs; i++) {
                 link_st *link = nn->outputs[i];
                 // link weights
@@ -63,6 +95,7 @@ void network_save(network_st *nw, char* filename)
             }
         }
     }
+
     fclose(fp);
 }
 
@@ -84,6 +117,7 @@ void network_destroy(network_st* nw)
         FREE(layer);
     }
     nw->num_layers = 0;
+    network_free(nw);
 }
 
 void network_setup(network_st* nw, size_t layer_count, size_t* neuron_count_list, double (*func)(double))
@@ -123,6 +157,16 @@ void network_setup(network_st* nw, size_t layer_count, size_t* neuron_count_list
             }
         }
     }
+}
+
+void network_get_outputs(network_st* nw, double *outputs)
+{
+    layer_st* olayer = nw->layers[nw->num_layers - 1];
+    for (size_t t = 0; t < olayer->num_neurons; t++) {
+        neuron_st* nn = olayer->neurons[t];
+        outputs[t] = nn->output;
+    }
+
 }
 
 bool network_print_training(network_st* nw, double* targets, size_t size, size_t iter)
@@ -318,5 +362,6 @@ void network_push_layer(network_st* nw, layer_st* layer)
 
 void network_free(network_st* nw)
 {
+    FREE(nw->name);
     FREE(nw->layers);
 }
